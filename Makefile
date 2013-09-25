@@ -5,6 +5,7 @@ install:
 	sudo apt-get install -y npm 
 	npm install socket.io
 	npm install socket.io-client
+	npm install socket.io-clusterhub
 	npm install commander
 	@echo
 	@echo "Ready to stress your servers :-)"
