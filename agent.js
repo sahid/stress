@@ -2,7 +2,7 @@ var program = require('commander');
 
 var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_SERVICE = 8080;
-var DEFAULT_REFRESH = 100;
+var DEFAULT_REFRESH = 1000;
 
 var io = require('socket.io-client');
 var exec = require('child_process').exec;
@@ -39,7 +39,7 @@ var print = function(host, service, refresh) {
 		'The service this server handler. default:127.0.0.1')
 	.parse(process.argv);
     
-    var nrefresh = program.bucketMs || DEFAULT_REFRESH;
+    var nrefresh = program.refresh || DEFAULT_REFRESH;
     var service = program.service || DEFAULT_SERVICE;
     var host = program.host || DEFAULT_HOST;
     
