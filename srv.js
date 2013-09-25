@@ -5,10 +5,10 @@ var cluster = require('cluster');
 var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_SERVICE = 8080;
 var DEFAULT_CHUNK_MS = 1000; //10s
-var DEBUG = true;
+var DEBUG = !true;
 
 var dispatch = function(store, host, service, chunkms) {
-    console.info("Ready to handle request on: " + host + ":" + service);
+    console.info("Ready to handle requests on: " + host + ":" + service);
     var io = require('socket.io').listen(service, {log: DEBUG}); //,
     io.configure(function() {
 	io.set('store', store);
