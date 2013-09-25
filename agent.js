@@ -1,9 +1,15 @@
+var program = require('commander');
+
+var DEFAULT_HOST = "127.0.0.1";
+var DEFAULT_SERVICE = 8080;
+var DEFAULT_REFRESH = 100;
+
 var io = require('socket.io-client');
 var exec = require('child_process').exec;
 
 var MB = 1024*1024;
-(function() {
-    var socket = io.connect("http://127.0.0.1:8080/");
+var print = function(host, service, refresh) {
+    var socket = io.connect("http://"+host+":"+service+"/");
     socket.on("connect", function() {
 	setInterval(function() {
 	    socket.emit("agent");
@@ -17,6 +23,25 @@ var MB = 1024*1024;
 			    data.loadavg[0]+ ", " +
 			    data.loadavg[0]);
 	    });
-	}, 800);
+	}, refresh);
     });
+};
+
+
+(function() {
+    program
+	.version('0.1')
+	.option('-r, --refresh <n>', 
+		'Refresh the data', parseInt)
+	.option('-p, --port <n>', 
+		'The service this server handler. default:8080', parseInt)
+	.option('-h, --host <n>', 
+		'The service this server handler. default:127.0.0.1')
+	.parse(process.argv);
+    
+    var nrefresh = program.bucketMs || DEFAULT_REFRESH;
+    var service = program.service || DEFAULT_SERVICE;
+    var host = program.host || DEFAULT_HOST;
+    
+    print(host, service, nrefresh)
 })();
