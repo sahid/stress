@@ -46,7 +46,7 @@ var dispatch = function(host, service, chunkms) {
 	.parse(process.argv);
     
     var chunkms = program.connections || DEFAULT_CHUNK_MS;
-    var service = program.service || DEFAULT_SERVICE;
+    var service = program.port || DEFAULT_SERVICE;
     var host = program.host || DEFAULT_HOST;
 
     dispatch(host, service, chunkms);
