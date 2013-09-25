@@ -1,8 +1,8 @@
 install:
 	sudo add-apt-repository --yes ppa:chris-lea/node.js
 	sudo apt-get update
+	sudo apt-get install -y python-software-properties python g++ make
 	sudo apt-get install -y nodejs 
-	sudo apt-get install -y npm 
 	npm install socket.io
 	npm install socket.io-client
 	npm install socket.io-clusterhub
