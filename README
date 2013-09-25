@@ -1,0 +1,12 @@
+Stress - simple way to test your websocket server.
+==================================================
+
+This program is divided in 3:
+ - srv.js, is a simple serverhandler ws connections
+ - clt.js, is a simple client execute ws connections
+ - agent.js, is an agent that retrieve informations on the server.
+
+
+srv.js
+======
+To execute the server, 
