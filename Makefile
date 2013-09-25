@@ -1,5 +1,5 @@
 install:
-	sudo apt-get install nodejs -y
+	sudo apt-get install nodejs npm -y
 	npm install socket.io
 	npm install socket.io-client
 	npm install commander
