@@ -11,7 +11,7 @@ var DEFAULT_RETRY_FAILED = false;
 
 var gl_spawned = 0;
 var gl_accepted = 0;
-var gl_refused = 0;
+var gl_failed = 0;
 
 var flood = function(host, service, retryfailed) {
     var socket = io.connect("http://"+host+":"+service+"/", 
@@ -26,8 +26,15 @@ var flood = function(host, service, retryfailed) {
    });
 
     socket.on('connect_failed', function(){
-	gl_refused += 1;
+	gl_failed += 1;
 
+	if (retryfailed)
+	    gl_spawned += 1;
+    });
+
+    socket.on('disconnect', function() {
+	gl_failed += 1;
+	
 	if (retryfailed)
 	    gl_spawned += 1;
     });
@@ -37,7 +44,7 @@ var loop = function(conn, bsize, bms, host, service, retryfailed) {
     var idint = setInterval(function() {
 	process.stdout.write("Connections spawned: " + gl_spawned + 
 			     ", Connection accepted: "+ gl_accepted +
-			     ", Connextion refused: " + gl_refused + ".\r");
+			     ", Connextion failed: " + gl_failed + ".\r");
 	for (var i=0; i<bsize; i++) {
 	    if (gl_spawned >= conn) {    
 		//clearInterval(idint);
