@@ -1,12 +1,113 @@
 Stress - simple way to test your websocket server.
 ==================================================
 
-This program is divided in 3:
- - srv.js, is a simple serverhandler ws connections
- - clt.js, is a simple client execute ws connections
- - agent.js, is an agent that retrieve informations on the server.
+This is a set of programs, srv.js is a simple serverhandler ws connections,
+clt.js, is a simple client execute ws connections and agent.js is an agent 
+aim to retrieve informations on the server.
+
+How to use it:
+==============
+Is quite easy to use it;
+
+First be sure all dependencies are installed (node, socket-io...) for that use the command:
+   sahid@laptop:~/stress$ make
+
+When finished you can start to run a server:
+    sahid@laptop:~/stress$ node srv.js &
+    [1] 5590
+    Ready to handle requests on: 127.0.0.1:8080
+    Ready to handle requests on: 127.0.0.1:8080
+    Ready to handle requests on: 127.0.0.1:8080
+    Ready to handle requests on: 127.0.0.1:8080
+
+Now connect the agent:
+    sahid@laptop:~/stress$ node agent.js
+    connections: 1
+    open: 1
+    closed: 0
+    total mem(mb): 15923.2265625
+    free mem(mb): 12747.8515625
+    load avg: 0.29052734375, 0.29052734375, 0.29052734375
+    cpu used: 4
+
+On an other shell you can now run a client:
+    sahid@laptop:~/stress$ node clt.js 
+    Connections spawned: 100, Connections accepted: 100, Connections failed: 0.
+
+
+Please report any bugs or inconsistent you can find :)
 
 
 srv.js
 ======
-To execute the server, 
+The server accepte connections from client and send every 10s (eg: -c option)
+a message to the clients connected.
+
+sahid@laptop:~/stress$ node srv.js --help
+
+  Usage: srv.js [options]
+
+  Options:
+
+    -h, --help          output usage information
+    -V, --version       output the version number
+    -c, --chunk-ms <n>  The time between each reponse. default:1000
+    -p, --port <n>      The service this server handler. default:8080
+    -h, --host <n>      The service this server handler. default:127.0.0.1
+    -n, --num-cpus <n>  Set the number of cpu cores used. default:use system
+
+
+clt.js
+======
+The client try to spawn connections to the servers. To control the burst is it possible
+to configure a bucket of connections spawned every bucket-ms.
+
+sahid@laptop:~/stress$ node clt.js --help
+
+  Usage: clt.js [options]
+
+  Options:
+
+    -h, --help             output usage information
+    -V, --version          output the version number
+    -c, --connections <n>  Number of connections
+    -r, --retry-failed     Retry connection failed because of pool timeout.
+    -b, --bucket-size <n>  Number of connection launched every "bucket-ms"
+    -m, --bucket-ms <n>    Time to wait before to launch a bicket of connections
+    -p, --port <n>         The service this server handler. default:8080
+    -h, --host <n>         The service this server handler. default:127.0.0.1
+
+agent.js
+========
+The agent is reponsible to collect informations from the server. actually you have
+to becareful with the agent because when it ask the server the actual algorithm is
+not really optimised so consums resources (memory).
+Then is better to launch the agent just after the server is running to avoid long time
+to connect during the connections burst.
+
+sahid@laptop:~/stress$ node agent.js --help
+
+  Usage: agent.js [options]
+
+  Options:
+
+    -h, --help         output usage information
+    -V, --version      output the version number
+    -r, --refresh <n>  Refresh the data
+    -p, --port <n>     The service this server handler. default:8080
+    -h, --host <n>     The service this server handler. default:127.0.0.1
+
+
+Notes:
+  + There is a bug not resolved yet on socket.io-client
+    when we try to open more thant 3000 connections. This bugs can appens on client.
+    https://github.com/LearnBoost/socket.io-client/issues/442
+
+
+
+Roadmap
+=======
+Clean the code
+Imporove the agent
+Add more flexibility on the set of project
+Why not tu use a manager
