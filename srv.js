@@ -15,13 +15,13 @@ var dispatch = function(store, host, service, chunkms) {
     });
     io.sockets.on('connection', function (socket) {
 	//console.info("Stress's server welcomes to you. Your id: " + socket.id);
-	
 	socket.on("agent", function(data) {
 	    socket.emit("response", {
 		connections: io.server.connections,
 		loadavg: os.loadavg(),
 		totalmem: os.totalmem(),
 		freemem: os.freemem(),
+		cpus:os.cpus(),
 	    });
 	});
 	
@@ -49,15 +49,12 @@ var dispatch = function(store, host, service, chunkms) {
 		'The service this server handler. default:127.0.0.1')
 	.option('-n, --num-cpus <n>', 
 		'Set the number of cpu cores used. default:use system')
-
-
 	.parse(process.argv);
     
     var chunkms = program.connections || DEFAULT_CHUNK_MS;
     var service = program.port || DEFAULT_SERVICE;
     var host = program.host || DEFAULT_HOST;
     var cpus = program.numCpus || os.cpus().length;
-    
 
     var store = new (require('socket.io-clusterhub'));
     if (cluster.isMaster) {

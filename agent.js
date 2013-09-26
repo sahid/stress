@@ -22,6 +22,7 @@ var print = function(host, service, refresh) {
 			    data.loadavg[0]+ ", " +
 			    data.loadavg[0]+ ", " +
 			    data.loadavg[0]);
+		console.log(data.cpus);
 	    });
 	}, refresh);
     });
