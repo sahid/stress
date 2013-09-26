@@ -43,8 +43,8 @@ var flood = function(host, service, retryfailed) {
 var loop = function(conn, bsize, bms, host, service, retryfailed) {
     var idint = setInterval(function() {
 	process.stdout.write("Connections spawned: " + gl_spawned + 
-			     ", Connection accepted: "+ gl_accepted +
-			     ", Connextion failed: " + gl_failed + ".\r");
+			     ", Connections accepted: "+ gl_accepted +
+			     ", Connections failed: " + gl_failed + ".\r");
 	for (var i=0; i<bsize; i++) {
 	    if (gl_spawned >= conn) {    
 		//clearInterval(idint);
