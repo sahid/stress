@@ -24,6 +24,7 @@ var print = function(host, service, refresh) {
 			    data.loadavg[0]+ ", " +
 			    data.loadavg[0]+ ", " +
 			    data.loadavg[0]);
+		console.log("cpu used: " + data.cpusused)
 		console.log(data.cpus);
 	    });
 	}, refresh);
