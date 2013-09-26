@@ -17,7 +17,9 @@ var dispatch = function(store, host, service, chunkms) {
 	//console.info("Stress's server welcomes to you. Your id: " + socket.id);
 	socket.on("agent", function(data) {
 	    socket.emit("response", {
-		connections: io.server.connections,
+		connections: Object.keys(store.manager.connected).length,
+		open: Object.keys(store.manager.open).length,
+		closed: Object.keys(store.manager.closed).length,
 		loadavg: os.loadavg(),
 		totalmem: os.totalmem(),
 		freemem: os.freemem(),
@@ -56,7 +58,7 @@ var dispatch = function(store, host, service, chunkms) {
     var host = program.host || DEFAULT_HOST;
     var cpus = program.numCpus || os.cpus().length;
 
-    var store = new (require('socket.io-clusterhub'));
+    var store = new (require('socket.io-clusterhub'));    
     if (cluster.isMaster) {
 	// Fork workers.
 	for (var i = 0; i < cpus; i++) {
