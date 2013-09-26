@@ -7,7 +7,7 @@ var DEFAULT_SERVICE = 8080;
 var DEFAULT_CHUNK_MS = 1000; //10s
 var DEBUG = !true;
 
-var dispatch = function(store, host, service, chunkms) {
+var dispatch = function(store, host, service, chunkms, cpus) {
     console.info("Ready to handle requests on: " + host + ":" + service);
     var io = require('socket.io').listen(service, {log: DEBUG}); //,
     io.configure(function() {
@@ -24,6 +24,7 @@ var dispatch = function(store, host, service, chunkms) {
 		totalmem: os.totalmem(),
 		freemem: os.freemem(),
 		cpus:os.cpus(),
+		cpusused:cpus
 	    });
 	});
 	
@@ -70,6 +71,6 @@ var dispatch = function(store, host, service, chunkms) {
 	});
     } else {
 	// workers
-	dispatch(store, host, service, chunkms);
+	dispatch(store, host, service, chunkms, cpus);
     }
 })();
