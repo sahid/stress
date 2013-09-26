@@ -6,7 +6,7 @@ var DEFAULT_BUCKET_SIZE = 10;
 var DEFAULT_BUCKET_MS = 100;
 var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_SERVICE = 8080
-var DEFAULT_CLOSE_TIMEOUT = 60
+var DEFAULT_CLOSE_TIMEOUT = 500
 var DEFAULT_RETRY_FAILED = false;
 
 var gl_spawned = 0;
@@ -66,7 +66,7 @@ var loop = function(conn, bsize, bms, host, service, retryfailed) {
 	.option('-b, --bucket-size <n>', 
 		'Number of connection launched every "bucket-ms"', parseInt)
 	.option('-m, --bucket-ms <n>', 
-		'Time to wait before to launch a bicket of connections', parseInt)
+		'Time to wait before to launch a bucket of connections', parseInt)
 	.option('-p, --port <n>', 
 		'The service this server handler. default:8080', parseInt)
 	.option('-h, --host <n>', 
