@@ -2,7 +2,7 @@ var program = require('commander');
 
 var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_SERVICE = 8080;
-var DEFAULT_REFRESH = 1000;
+var DEFAULT_REFRESH = 3000;
 
 var io = require('socket.io-client');
 var exec = require('child_process').exec;
@@ -16,6 +16,8 @@ var print = function(host, service, refresh) {
 	    socket.on("response", function(data) {
 		console.log("\033[2J");
 		console.log("connections: " + data.connections);
+		console.log("open: " + data.open);
+		console.log("closed: " + data.closed);
 		console.log("total mem(mb): " + data.totalmem/MB);
 		console.log("free mem(mb): " + data.freemem/MB);
 		console.log("load avg: " +
