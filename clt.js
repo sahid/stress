@@ -6,7 +6,7 @@ var DEFAULT_BUCKET_SIZE = 10;
 var DEFAULT_BUCKET_MS = 100;
 var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_SERVICE = 8080
-var DEFAULT_CLOSE_TIMEOUT = 500
+var DEFAULT_CLOSE_TIMEOUT = 10000
 var DEFAULT_RETRY_FAILED = false;
 
 var gl_spawned = 0;
@@ -16,7 +16,10 @@ var gl_failed = 0;
 var flood = function(host, service, retryfailed) {
     var socket = io.connect("http://"+host+":"+service+"/", 
 			    {'force new connection': true,
-			     'close timeout': DEFAULT_CLOSE_TIMEOUT});
+                             'close timeout': DEFAULT_CLOSE_TIMEOUT,
+                             'reconnection delay': 500,
+                             'reconnection limit': 32000,
+                             'max reconnection attempts': 10});
     socket.on("connect", function() {
 	gl_accepted += 1
 	socket.emit("client");
