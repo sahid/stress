@@ -15,9 +15,9 @@ var print = function(host, service, refresh) {
 	    socket.emit("agent");
 	    socket.on("response", function(data) {
 		console.log("\033[2J");
-		console.log("connections: " + data.connections);
+		//console.log("connections: " + data.connections);
 		console.log("open: " + data.open);
-		console.log("closed: " + data.closed);
+		//console.log("closed: " + data.closed);
 		console.log("total mem(mb): " + data.totalmem/MB);
 		console.log("free mem(mb): " + data.freemem/MB);
 		console.log("load avg: " +

@@ -30,16 +30,10 @@ var flood = function(host, service, retryfailed) {
 
     socket.on('connect_failed', function(){
 	gl_failed += 1;
-
-	if (retryfailed)
-	    gl_spawned += 1;
     });
 
     socket.on('disconnect', function() {
 	gl_failed += 1;
-	
-	if (retryfailed)
-	    gl_spawned += 1;
     });
 };
 

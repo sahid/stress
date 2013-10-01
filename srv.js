@@ -17,9 +17,9 @@ var dispatch = function(store, host, service, chunkms, cpus) {
 	//console.info("Stress's server welcomes to you. Your id: " + socket.id);
 	socket.on("agent", function(data) {
 	    socket.emit("response", {
-		connections: Object.keys(store.manager.connected).length,
+		//connections: Object.keys(store.manager.connected).length,
 		open: Object.keys(store.manager.open).length,
-		closed: Object.keys(store.manager.closed).length,
+		//closed: Object.keys(store.manager.closed).length,
 		loadavg: os.loadavg(),
 		totalmem: os.totalmem(),
 		freemem: os.freemem(),
