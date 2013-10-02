@@ -8,7 +8,6 @@ var DEFAULT_CHUNK_MS = 1000; //10s
 var DEBUG = !true;
 
 var dispatch = function(store, host, service, chunkms, cpus) {
-    console.info("Ready to handle requests on: " + host + ":" + service);
     var io = require('socket.io').listen(service, {log: DEBUG}); //,
     io.configure(function() {
 	io.set('store', store);
@@ -17,9 +16,7 @@ var dispatch = function(store, host, service, chunkms, cpus) {
 	//console.info("Stress's server welcomes to you. Your id: " + socket.id);
 	socket.on("agent", function(data) {
 	    socket.emit("response", {
-		//connections: Object.keys(store.manager.connected).length,
-		open: Object.keys(store.manager.open).length,
-		//closed: Object.keys(store.manager.closed).length,
+		clients: io.sockets.clients().length,
 		loadavg: os.loadavg(),
 		totalmem: os.totalmem(),
 		freemem: os.freemem(),
@@ -38,6 +35,13 @@ var dispatch = function(store, host, service, chunkms, cpus) {
 	    })(0);
 	});
     });
+
+    if (cluster.worker.id == 1) {
+	setInterval(function() {
+	    console.log("\033[2J");
+	    console.log("clients: " + io.sockets.clients().length);
+	}, 1000);
+    }
 };
 
 
