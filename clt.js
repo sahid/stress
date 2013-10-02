@@ -14,6 +14,7 @@ var DEFAULT_NUMPROCESS = 1;
 var gl_spawned = 0;
 var gl_accepted = 0;
 var gl_failed = 0;
+var msg_received = 0;
 
 var flood = function(host, service, retryfailed) {
     var socket = io.connect("http://"+host+":"+service+"/", 
@@ -24,10 +25,13 @@ var flood = function(host, service, retryfailed) {
                              'max reconnection attempts': 10});
     socket.on("connect", function() {
 	gl_accepted += 1
+	/*
 	socket.emit("client");
 	socket.on("stream", function(data) {
 	    //console.log(data);
+	    msg_received ++;
 	});  
+	*/
    });
 
     socket.on('connect_failed', function(){
@@ -36,7 +40,7 @@ var flood = function(host, service, retryfailed) {
 
     socket.on('disconnect', function() {
 	gl_failed += 1;
-    });
+    });  
 };
 
 var loop = function(conn, bsize, bms, host, service, retryfailed) {
@@ -48,7 +52,6 @@ var loop = function(conn, bsize, bms, host, service, retryfailed) {
 		flood(host, service, retryfailed);
 		gl_spawned += 1;
 	    }
-	    process.send({"spawned": gl_spawned});
 	}
     }, bms);
 };
@@ -87,34 +90,17 @@ var loop = function(conn, bsize, bms, host, service, retryfailed) {
 	for (var i = 0; i < nproc; i++) {
 	    cluster.fork();
 	}
-
-	setInterval(function() {
-	    console.log("\033[2J");
-	    function eachWorker(callback) {
-		for (var id in cluster.workers) {
-		    callback(cluster.workers[id]);
-		}
-	    }
-	    eachWorker(function(worker) {
-		worker.send({"id": worker.id});
-	    });
-	}, 1000);
-
-	cluster.on("message", function(msg) {
-	    console.log(msg);
-	})
-	
 	cluster.on('death', function(worker) {
 	    console.log('worker ' + worker.pid + ' died');
 	});
     } else {
-	process.on("message", function(msg) {
-	    console.log("Worker:" + msg.id + " Connections spawned: " + gl_spawned + 
-			", Connections accepted: "+ gl_accepted +
-			", Connections failed: " + gl_failed + ".\r");
-	    
-	});
 	// workers
 	loop(conn_per_clt, bsize, bms, host, service, retryfailed);
+	setInterval(function() {
+	    console.log("Worker:" + cluster.worker.id + " Connections spawned: " + gl_spawned + 
+			", Connections accepted: "+ gl_accepted +
+			", Connections failed: " + gl_failed + ".\r");
+	}, 1000);
+
     }
 })();
