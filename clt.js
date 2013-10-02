@@ -1,5 +1,6 @@
 var program = require('commander');
-var io = require('socket.io-client');
+var io = require('socket.io-client')
+var cluster = require('cluster');
 
 var DEFAULT_MAX_CONNECTIONS = 100;
 var DEFAULT_BUCKET_SIZE = 10;
@@ -8,6 +9,7 @@ var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_SERVICE = 8080
 var DEFAULT_CLOSE_TIMEOUT = 10000
 var DEFAULT_RETRY_FAILED = false;
+var DEFAULT_NUMPROCESS = 1;
 
 var gl_spawned = 0;
 var gl_accepted = 0;
@@ -39,9 +41,6 @@ var flood = function(host, service, retryfailed) {
 
 var loop = function(conn, bsize, bms, host, service, retryfailed) {
     var idint = setInterval(function() {
-	process.stdout.write("Connections spawned: " + gl_spawned + 
-			     ", Connections accepted: "+ gl_accepted +
-			     ", Connections failed: " + gl_failed + ".\r");
 	for (var i=0; i<bsize; i++) {
 	    if (gl_spawned >= conn) {    
 		//clearInterval(idint);
@@ -49,6 +48,7 @@ var loop = function(conn, bsize, bms, host, service, retryfailed) {
 		flood(host, service, retryfailed);
 		gl_spawned += 1;
 	    }
+	    process.send({"spawned": gl_spawned});
 	}
     }, bms);
 };
@@ -68,6 +68,8 @@ var loop = function(conn, bsize, bms, host, service, retryfailed) {
 		'The service this server handler. default:8080', parseInt)
 	.option('-h, --host <n>', 
 		'The service this server handler. default:127.0.0.1')
+	.option('-n, --num-proc <n>', 
+		'Set the number of process used. default:1', parseInt)
 	.parse(process.argv);
     
     var conn = program.connections || DEFAULT_MAX_CONNECTIONS;
@@ -76,6 +78,43 @@ var loop = function(conn, bsize, bms, host, service, retryfailed) {
     var retryfailed = program.retryFailed || DEFAULT_RETRY_FAILED;
     var service = program.service || DEFAULT_SERVICE;
     var host = program.host || DEFAULT_HOST;
+    var nproc = program.numProc || DEFAULT_NUMPROCESS;
 
-    loop(conn, bsize, bms, host, service, retryfailed);
+    var conn_per_clt = conn / nproc;
+
+    if (cluster.isMaster) {
+	// Fork workers.
+	for (var i = 0; i < nproc; i++) {
+	    cluster.fork();
+	}
+
+	setInterval(function() {
+	    console.log("\033[2J");
+	    function eachWorker(callback) {
+		for (var id in cluster.workers) {
+		    callback(cluster.workers[id]);
+		}
+	    }
+	    eachWorker(function(worker) {
+		worker.send({"id": worker.id});
+	    });
+	}, 1000);
+
+	cluster.on("message", function(msg) {
+	    console.log(msg);
+	})
+	
+	cluster.on('death', function(worker) {
+	    console.log('worker ' + worker.pid + ' died');
+	});
+    } else {
+	process.on("message", function(msg) {
+	    console.log("Worker:" + msg.id + " Connections spawned: " + gl_spawned + 
+			", Connections accepted: "+ gl_accepted +
+			", Connections failed: " + gl_failed + ".\r");
+	    
+	});
+	// workers
+	loop(conn_per_clt, bsize, bms, host, service, retryfailed);
+    }
 })();
