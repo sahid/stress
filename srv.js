@@ -4,17 +4,22 @@ var cluster = require('cluster');
 
 var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_SERVICE = 8080;
-var DEFAULT_CHUNK_MS = 1000; //10s
+var DEFAULT_CHUNK_MS = 10000; //10s
 var DEBUG = !true;
 var MB = 1024*1024;
 
 var dispatch = function(store, host, service, chunkms, cpus) {
-    var io = require('socket.io').listen(service, {log: DEBUG}); //,
+    var io = require('socket.io').listen(service, {log: DEBUG
+						   "close timeout": 10000,
+                                                   "heartbeat timeout": 5000,
+                                                   "heartbeat interval": 15000,
+						  }); //,
     io.configure(function() {
 	io.set('store', store);
     });
     io.sockets.on('connection', function (socket) {
 	//console.info("Stress's server welcomes to you. Your id: " + socket.id);
+	/*
 	socket.on("agent", function(data) {
 	    socket.emit("response", {
 		clients: io.sockets.clients().length,
@@ -25,6 +30,7 @@ var dispatch = function(store, host, service, chunkms, cpus) {
 		cpusused:cpus
 	    });
 	});
+	*/
 	
 	// Event client, it registers a new client.
 	socket.on("client", function(data) {
