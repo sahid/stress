@@ -6,6 +6,7 @@ var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_SERVICE = 8080;
 var DEFAULT_CHUNK_MS = 1000; //10s
 var DEBUG = !true;
+var MB = 1024*1024;
 
 var dispatch = function(store, host, service, chunkms, cpus) {
     var io = require('socket.io').listen(service, {log: DEBUG}); //,
@@ -40,6 +41,9 @@ var dispatch = function(store, host, service, chunkms, cpus) {
 	setInterval(function() {
 	    console.log("\033[2J");
 	    console.log("clients: " + io.sockets.clients().length);
+	    console.log("total mem(mb): " + os.totalmem()/MB);
+	    console.log("free mem(mb): " + os.freemem()/MB);
+	    console.log("load avg: " + os.loadavg()[0])
 	}, 1000);
     }
 };
