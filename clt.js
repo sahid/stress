@@ -79,7 +79,7 @@ var loop = function(conn, bsize, bms, host, service, retryfailed) {
     var bsize = program.bucketSize || DEFAULT_BUCKET_SIZE;
     var bms = program.bucketMs || DEFAULT_BUCKET_MS;
     var retryfailed = program.retryFailed || DEFAULT_RETRY_FAILED;
-    var service = program.service || DEFAULT_SERVICE;
+    var service = program.port || DEFAULT_SERVICE;
     var host = program.host || DEFAULT_HOST;
     var nproc = program.numProc || DEFAULT_NUMPROCESS;
 

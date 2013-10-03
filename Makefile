@@ -1,7 +1,8 @@
 install:
+	sudo apt-get update
+	sudo apt-get install -y python-software-properties
 	sudo add-apt-repository --yes ppa:chris-lea/node.js
 	sudo apt-get update
-	sudo apt-get install -y python-software-properties python g++ make
 	sudo apt-get install -y nodejs 
 	npm install socket.io
 	npm install socket.io-client
