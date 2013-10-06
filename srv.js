@@ -8,6 +8,14 @@ var DEBUG = !true;
 var DEFAULT_SERVICE = 8080;
 var DEFAULT_CHUNK_MS = 10000;
 
+
+var feed = function(socket, n, chunkms) {
+    socket.emit("stream", {id: socket.id, chunk: n});
+    setTimeout(function() {
+	feed(socket, n+1, chunkms);
+    }, chunkms);
+};
+
 var serv = function(service, chunkms, cpus) {
     var io = require('socket.io').listen(service, {
 	"log": DEBUG, 
@@ -28,12 +36,7 @@ var serv = function(service, chunkms, cpus) {
     }
 
     io.sockets.on('connection', function (socket) {
-	(feed = function(n) {
-	    socket.emit("stream", {id: socket.id, chunk: n});
-	    setTimeout(function() {
-		feed(n+1);
-	    }, chunkms);
-	})(0);
+	feed(socket, 0, chunkms);
     });
     
     if (cluster.worker.id == 1) {
